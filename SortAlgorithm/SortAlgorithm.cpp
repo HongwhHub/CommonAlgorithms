@@ -2,6 +2,23 @@
 //
 
 #include "stdafx.h"
+#include <iostream>
+#include <algorithm>
+#include <time.h>
+//对数器
+template<class T>
+int length(T& arr);
+template <class T>
+T* generateRandomArray(int size, int value);
+double GetRand();
+template<class T>
+T * copyArray(T *arr);
+template<class T>
+bool asc(T a, T b);
+template<class T>
+bool desc(T a, T b);
+template<class T>
+T* rightMethod(T *arr);
 
 //交换
 template <class T>
@@ -29,6 +46,68 @@ int main()
     return 0;
 }
 
+template<class T>
+int length(T& arr)
+{
+	//cout << sizeof(arr[0]) << endl;
+	//cout << sizeof(arr) << endl;
+	return sizeof(arr) / sizeof(arr[0]);
+}
+
+template<class T>
+T * generateRandomArray(int size, int value)
+{
+	T arr[] = new T((T)(size + 1)*GetRand());
+	arr[0] = (T)((value + 1)*GetRand()) - (T)((value)*GetRand());
+	for (int i = 1; i < length(arr); i++)
+	{
+		arr[i] = (T)((value + 1)*GetRand()) - (T)((value)*GetRand());
+	}
+	return arr;
+}
+
+double GetRand()
+{
+	std::srand(time(NULL));
+	int iRand = std::rand();
+	iRand %= 10000; // 取0 ~ 9999
+	return iRand / 10000.0; // 注意加".0
+							// PS：保留几位小数就合适求舍，求商
+}
+
+template<class T>
+T * copyArray(T *arr)
+{
+	T tmp[] = new T(length(arr));
+	for (int i = 0; i < length(arr); i++)
+		tmp[i] = arr[i];
+	return tmp;
+}
+template<class T>
+bool asc(T a, T b)
+{
+	if (a < b)
+		return true;
+	else
+		return false;
+}
+template<class T>
+bool desc(T a, T b)
+{
+	if (a < b)
+		return false;
+	else
+		return true;
+}
+template<class T>
+T * rightMethod(T * arr)
+{
+	//升序
+	/*std::sort(arr, std::end(a), asc);*/
+	//降序
+	std::sort(arr, std::end(a), desc);
+	return nullptr;
+}
 template<class T>
 void swap(T & a, T & b)
 {
@@ -79,3 +158,5 @@ void InsertionSort(T * a, int arraySize)
 		for (int j = i - 1; j >= 0 && a[j] > a[j + 1]; j--)
 			swap(a[j], a[j + 1]);
 }
+
+
