@@ -19,6 +19,8 @@ template<class T>
 bool desc(T a, T b);
 template<class T>
 T* rightMethod(T *arr);
+template<class T>
+bool isEqual(T *a, T *b);
 
 //交换
 template <class T>
@@ -40,9 +42,15 @@ void InsertionSort(T *a, int arraySize);
 
 int main()
 {
-	int a[5] = { 2,4,1,3,9 };
-	//BubbleSort(a, 5);
-	SelectSort(a, 5);
+	int *arr1;
+	arr1 = generateRandomArray<int>(10, 10000);
+	int *rightArray = rightMethod<int>(arr1);
+	int *arr2 = copyArray<int>(arr1);
+	int *arr3 = copyArray<int>(arr1);
+	BubbleSort(arr2, length(arr2));
+	SelectSort(arr3, length(arr3));
+	if (isEqual(arr2, rightArray) && isEqual(rightArray, arr3))
+		std::cout << "ok" << std::endl;
     return 0;
 }
 
@@ -51,34 +59,40 @@ int length(T& arr)
 {
 	//cout << sizeof(arr[0]) << endl;
 	//cout << sizeof(arr) << endl;
-	return sizeof(arr) / sizeof(arr[0]);
+	return _msize(arr) / sizeof(arr[0]);
 }
 
 template<class T>
 T * generateRandomArray(int size, int value)
 {
-	T arr[] = new T((T)(size + 1)*GetRand());
-	arr[0] = (T)((value + 1)*GetRand()) - (T)((value)*GetRand());
-	for (int i = 1; i < length(arr); i++)
+	srand((int)time(0));
+	T *arr = new T[(int)size*rand() % 10000]();
+	
+	
+	//arr[0] = (T)((value + 1)*GetRand()) - (T)((value)*GetRand());
+	for (int i = 0; i < length(arr); i++)
 	{
-		arr[i] = (T)((value + 1)*GetRand()) - (T)((value)*GetRand());
+		int iRand = std::rand() % 10000;
+		arr[i] = (T)((value + 1)*iRand) - (T)((value)*iRand);
+		//std::cout << arr[i] << std::endl;
 	}
 	return arr;
 }
 
 double GetRand()
 {
-	std::srand(time(NULL));
-	int iRand = std::rand();
-	iRand %= 10000; // 取0 ~ 9999
-	return iRand / 10000.0; // 注意加".0
+	srand((int)time(0));
+	int iRand = std::rand()%10000;
+	std::cout << iRand << std::endl;
+	return iRand; // 注意加".0
 							// PS：保留几位小数就合适求舍，求商
 }
 
 template<class T>
 T * copyArray(T *arr)
 {
-	T tmp[] = new T(length(arr));
+	T *tmp = new T[length(arr)]();
+	
 	for (int i = 0; i < length(arr); i++)
 		tmp[i] = arr[i];
 	return tmp;
@@ -94,7 +108,7 @@ bool asc(T a, T b)
 template<class T>
 bool desc(T a, T b)
 {
-	if (a < b)
+	if (a <= b)
 		return false;
 	else
 		return true;
@@ -105,8 +119,26 @@ T * rightMethod(T * arr)
 	//升序
 	/*std::sort(arr, std::end(a), asc);*/
 	//降序
-	std::sort(arr, std::end(a), desc);
-	return nullptr;
+	std::sort(arr, arr+length(arr), desc<T>);
+	return arr;
+}
+template<class T>
+bool isEqual(T * a, T * b)
+{
+	if (a == nullptr && b == nullptr)
+		return true;
+	if ((a == nullptr&&b != nullptr) || (a != nullptr&&b == nullptr))
+		return false;
+	if (length(a) != length(b))
+		return false;
+	for (int i = 0; i < length(a); i++)
+	{
+		if (a[i] != b[i])
+			return false;
+	}
+		
+
+	return true;
 }
 template<class T>
 void swap(T & a, T & b)
