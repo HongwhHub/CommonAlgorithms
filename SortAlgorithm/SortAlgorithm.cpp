@@ -10,7 +10,6 @@ template<class T>
 int length(T& arr);
 template <class T>
 T* generateRandomArray(int size, int value);
-double GetRand();
 template<class T>
 T * copyArray(T *arr);
 template<class T>
@@ -40,6 +39,15 @@ void SelectSort(T *a, int arraySize);
 template <class T>
 void InsertionSort(T *a, int arraySize);
 
+//πÈ≤¢≈≈–Ú
+template <class T>
+void MergeSort(T *a);
+template<class T>
+void SortProcess(T *a, int left, int right);
+template<class T>
+void Merge(T *a, int left, int mid, int right);
+
+
 int main()
 {
 	int *arr1;
@@ -47,10 +55,22 @@ int main()
 	int *rightArray = rightMethod<int>(arr1);
 	int *arr2 = copyArray<int>(arr1);
 	int *arr3 = copyArray<int>(arr1);
+	int *arr4 = copyArray<int>(arr1);
 	BubbleSort(arr2, length(arr2));
 	SelectSort(arr3, length(arr3));
-	if (isEqual(arr2, rightArray) && isEqual(rightArray, arr3))
-		std::cout << "ok" << std::endl;
+	MergeSort(arr4);
+	if (isEqual(arr2, rightArray))
+		std::cout << "√∞≈›≈≈–Ú ok" << std::endl;
+	else
+		std::cout << "√∞≈›≈≈–Ú Not ok" << std::endl;
+	if(isEqual(rightArray, arr3))
+		std::cout << "—°‘Ò≈≈–Ú ok" << std::endl;
+	else
+		std::cout << "—°‘Ò≈≈–Ú Not ok" << std::endl;
+	if (isEqual(arr4, rightArray))
+		std::cout << "πÈ≤¢≈≈–Ú ok" << std::endl;
+	else
+		std::cout << "πÈ≤¢≈≈–Ú Not ok" << std::endl;
     return 0;
 }
 
@@ -67,26 +87,14 @@ T * generateRandomArray(int size, int value)
 {
 	srand((int)time(0));
 	T *arr = new T[(int)size*rand() % 10000]();
-	
-	
-	//arr[0] = (T)((value + 1)*GetRand()) - (T)((value)*GetRand());
 	for (int i = 0; i < length(arr); i++)
 	{
 		int iRand = std::rand() % 10000;
 		arr[i] = (T)((value + 1)*iRand) - (T)((value)*iRand);
-		//std::cout << arr[i] << std::endl;
 	}
 	return arr;
 }
 
-double GetRand()
-{
-	srand((int)time(0));
-	int iRand = std::rand()%10000;
-	std::cout << iRand << std::endl;
-	return iRand; // ◊¢“‚º”".0
-							// PS£∫±£¡Ùº∏Œª–° ˝æÕ∫œ  «Û…·£¨«Û…Ã
-}
 
 template<class T>
 T * copyArray(T *arr)
@@ -191,4 +199,40 @@ void InsertionSort(T * a, int arraySize)
 			swap(a[j], a[j + 1]);
 }
 
+template<class T>
+void MergeSort(T * a)
+{
+	if (a == nullptr || length(a) < 2)
+		return;
+	SortProcess(a, 0, length(a) - 1);
+}
+
+template<class T>
+void SortProcess(T *a,int left,int right)
+{
+	if (left == right)
+		return;
+	int mid = (left + right) / 2;
+	SortProcess(a, left, mid);
+	SortProcess(a, mid + 1,right);
+	Merge(a, left, mid, right);
+}
+
+template<class T>
+void Merge(T *a, int left, int mid, int right)
+{
+	T *tmp = new T[right - left + 1]();
+	int i = 0;
+	int p1 = left;
+	int p2 = mid + 1;
+	while (p1 <= mid&&p2 <= right)
+		tmp[i++] = a[p1] < a[p2] ? a[p2++] : a[p1++];
+	while (p1 <= mid)
+		tmp[i++] = a[p1++];
+	while (p2 <= right)
+		tmp[i++] = a[p2++];
+	for (i = 0; i < length(tmp); i++)
+		a[left + i] = tmp[i];
+	delete []tmp;
+}
 
