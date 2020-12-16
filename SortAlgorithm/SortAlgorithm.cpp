@@ -47,30 +47,76 @@ void SortProcess(T *a, int left, int right);
 template<class T>
 void Merge(T *a, int left, int mid, int right);
 
+//¿ìËÙÅÅĞò(·ÂºÉÀ¼¹úÆìÎÊÌâÊµÏÖ)
+template <typename T>
+void QSwap(T *a, int l, int r);
+template <typename T>
+void Partition(T * arr, int L, int R, int *tmp);
+template <typename T>
+void QuickSort(T *arr, int L, int R);
+
+//Ëæ»ú¿ìËÙÅÅĞò
+template <typename T>
+void RandomQuickSort(T *arr, int L, int R);
+
+//¶ÑÅÅĞò
+template <typename T>
+void HeapSort(T *arr);
+template <typename T>
+void HeapInsert(T *arr, int index);
+template <typename T>
+void Heapify(T *arr, int index, int size);
+
+
 
 int main()
 {
 	int *arr1;
-	arr1 = generateRandomArray<int>(10, 10000);
+	arr1 = generateRandomArray<int>(11, 10000);
 	int *rightArray = rightMethod<int>(arr1);
 	int *arr2 = copyArray<int>(arr1);
 	int *arr3 = copyArray<int>(arr1);
 	int *arr4 = copyArray<int>(arr1);
+	int *arr5 = copyArray<int>(arr1);
+	int *arr6 = copyArray<int>(arr1);
+	int *arr7 = copyArray<int>(arr1);
+
 	BubbleSort(arr2, length(arr2));
-	SelectSort(arr3, length(arr3));
-	MergeSort(arr4);
 	if (isEqual(arr2, rightArray))
 		std::cout << "Ã°ÅİÅÅĞò ok" << std::endl;
 	else
 		std::cout << "Ã°ÅİÅÅĞò Not ok" << std::endl;
-	if(isEqual(rightArray, arr3))
+
+	SelectSort(arr3, length(arr3));
+	if (isEqual(rightArray, arr3))
 		std::cout << "Ñ¡ÔñÅÅĞò ok" << std::endl;
 	else
 		std::cout << "Ñ¡ÔñÅÅĞò Not ok" << std::endl;
+
+	MergeSort(arr4);
 	if (isEqual(arr4, rightArray))
 		std::cout << "¹é²¢ÅÅĞò ok" << std::endl;
 	else
 		std::cout << "¹é²¢ÅÅĞò Not ok" << std::endl;
+
+	QuickSort(arr5, 0, length(arr5) - 1);	
+	if (isEqual(arr5, rightArray))
+		std::cout << "¿ìËÙÅÅĞò ok" << std::endl;
+	else
+		std::cout << "¿ìËÙÅÅĞò Not ok" << std::endl;
+
+	RandomQuickSort(arr6, 0, length(arr6) - 1);
+	if (isEqual(arr6, rightArray))
+		std::cout << "Ëæ»ú¿ìËÙÅÅĞò ok" << std::endl;
+	else
+		std::cout << "Ëæ»ú¿ìËÙÅÅĞò Not ok" << std::endl;
+
+	HeapSort(arr7);
+	if (isEqual(arr7, rightArray))
+		std::cout << "¶ÑÅÅĞò ok" << std::endl;
+	else
+		std::cout << "¶ÑÅÅĞò Not ok" << std::endl;
+
     return 0;
 }
 
@@ -86,7 +132,7 @@ template<class T>
 T * generateRandomArray(int size, int value)
 {
 	srand((int)time(0));
-	T *arr = new T[(int)size*rand() % 10000]();
+	T *arr = new T[(int)size*std::rand() % 1000]();//(int)size*std::rand() % 10000
 	for (int i = 0; i < length(arr); i++)
 	{
 		int iRand = std::rand() % 10000;
@@ -212,7 +258,7 @@ void SortProcess(T *a,int left,int right)
 {
 	if (left == right)
 		return;
-	int mid = (left + right) / 2;
+	int mid = (left+right)/2;
 	SortProcess(a, left, mid);
 	SortProcess(a, mid + 1,right);
 	Merge(a, left, mid, right);
@@ -236,3 +282,100 @@ void Merge(T *a, int left, int mid, int right)
 	delete []tmp;
 }
 
+template <typename T>
+void QSwap(T *a, int l, int r)
+{
+	T tmp = a[l];
+	a[l] = a[r];
+	a[r] = tmp;
+}
+
+template<typename T>
+void Partition(T * arr, int L, int R,int *tmp)
+{
+	int less = L - 1;
+	int more = R;
+	int curr = L;
+	while (curr < more)
+	{
+		if (arr[curr] > arr[R])
+			QSwap(arr, ++less, curr++);
+		else if (arr[curr] < arr[R])
+			QSwap(arr, --more, curr);
+		else
+			curr++;
+	}
+	*tmp=less+1;
+	*(tmp + 1) = more;
+	QSwap(arr, more, R);
+}
+
+template<typename T>
+void QuickSort(T * arr, int L, int R)
+{
+	if (L < R)
+	{
+		int *tmp=new int[2]; 
+		Partition(arr, L, R, tmp);
+		QuickSort(arr, L, *tmp - 1);
+		QuickSort(arr, *(tmp + 1) + 1, R);
+		delete[]tmp;
+	}
+}
+
+template<typename T>
+void RandomQuickSort(T * arr, int L, int R)
+{
+	if (L < R)
+	{
+		srand((int)time(0));
+		QSwap(arr, L + rand() % (R - L + 1) + L, R);
+		int *tmp = new int[2];
+		Partition(arr, L, R, tmp);
+		QuickSort(arr, L, *tmp - 1);
+		QuickSort(arr, *(tmp + 1) + 1, R);
+		delete[]tmp;
+	}
+}
+
+template<typename T>
+void HeapSort(T * arr)
+{
+	if (arr == nullptr || length(arr) < 2)
+		return;
+	//ĞÎ³ÉĞ¡¸ù¶Ñ
+	for (int i = 0; i < length(arr); i++)
+		HeapInsert(arr, i);
+	int heapSize = length(arr);
+	swap(arr, 0, --heapSize);
+	while (heapSize>0)
+	{
+		Heapify(arr, 0, heapSize);
+		swap(arr, 0, --heapSize);
+	}
+}
+
+template<typename T>
+void HeapInsert(T * arr, int index)
+{
+	while (arr[index] < arr[(index - 1) / 2]) {
+		swap(arr, index, (index - 1) / 2);
+		index = (index - 1) / 2;
+	}
+}
+
+template<typename T>
+void Heapify(T * arr, int index,int size)
+{
+	int left = index * 2 + 1;
+	while (left < size) {
+		int largest = left + 1 < size && arr[left + 1] < arr[left] ? left + 1 : left;
+		largest = arr[largest] < arr[index] ? largest : index;
+		if (largest == index) {
+			break;
+		}
+		swap(arr, largest, index);
+		index = largest;
+		left = index * 2 + 1;
+	}
+}
